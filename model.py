@@ -14,7 +14,14 @@ train_df = train_df[cols]
 
 train_df = train_df.dropna()
 def preprocess(train_df):
+    age_avg = train_df['Age'].mean()
+    fare_avg = train_df['Fare'].mean()
     for index, row in train_df.iterrows():
+        #for testing data
+        if np.isnan(row[2]):
+            train_df.at[index, 'Age'] = age_avg
+        if np.isnan(row[5]):
+            train_df.at[index, 'Fare'] = fare_avg
         # Replace male with 0 and female with 1
         if row[1] == 'male':
             train_df.at[index, 'Sex'] = 0
