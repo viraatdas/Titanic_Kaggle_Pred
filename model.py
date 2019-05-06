@@ -12,7 +12,7 @@ cols = cols[2:3] + cols[4:8] + cols[9:10] + cols[11:12] + cols[1:2]
 train_df = train_df[cols]
 
 age_avg = train_df['Age'].mean()
-
+emb_mode = train_df['Embarked'].value_counts().idxmax() #S
 for index, row in train_df.iterrows():
 
     #Make all Nan age the average
@@ -32,13 +32,19 @@ for index, row in train_df.iterrows():
         train_df.at[index, 'Embarked'] = 1
     elif row[6] == 'S':
         train_df.at[index, 'Embarked'] = 2
+    else: #For Nan values put the most showed location; determined above
+        train_df.at[index, 'Embarked'] = 2
+
 
 print(train_df)
 
 
 #Split into train and test
-X_train, X_test, y_train, y_Test = train_test_split(train_df.iloc[:, 0:-1], train_df.iloc[:,-1], test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(train_df.iloc[:, 0:-1], train_df.iloc[:,-1], test_size=0.2)
 
 #SVC gamma scale
-# clf = svm.SVC(gamma='scale')
-# clf.fit(X_train, y_train)
+clf = svm.SVC(gamma='scale')
+clf.fit(X_train, y_train)
+predict_y = clf.predict(X_test)
+accuracy = sum(1 for x,y in zip(predict_y, y_test) if x == y) / float(len(predict_y))
+print(accuracy)
